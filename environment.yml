@@ -5,6 +5,7 @@ dependencies:
   - pip
   - vtk
   - h5py
+  - pythreejs
   - voila
   - voila-material
   - pip:
