@@ -4,7 +4,6 @@ channels:
 dependencies:
   - pip
   - vtk
-  - xorg-libx11
   - h5py
   - pythreejs
   - voila
