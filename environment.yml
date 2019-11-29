@@ -1,0 +1,11 @@
+name: ipycanvas
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - vtk
+  - h5py
+  - voila
+  - voila-material
+  - pip:
+    - ipygany
