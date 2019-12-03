@@ -8,5 +8,6 @@ dependencies:
   - pythreejs
   - voila
   - voila-material
+  - nodejs
   - pip:
-    - ipygany
+    - git+https://github.com/QuantStack/ipygany.git
