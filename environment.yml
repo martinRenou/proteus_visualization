@@ -1,4 +1,3 @@
-name: ipycanvas
 channels:
   - conda-forge
 dependencies:
