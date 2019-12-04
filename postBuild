@@ -1,1 +1,1 @@
-pip install template
+pip install ./template
