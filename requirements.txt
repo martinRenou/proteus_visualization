@@ -1,9 +1,7 @@
 vtk
 h5py
-
 voila
 voila-material
 git+https://github.com/martinRenou/proteus_visualization#subdirectory=template
-
 pythreejs
 git+https://github.com/QuantStack/ipygany.git
