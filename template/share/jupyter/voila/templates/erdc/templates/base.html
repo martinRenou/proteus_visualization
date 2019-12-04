@@ -1,0 +1,111 @@
+{% macro spinner() -%}
+  <div class="loading">
+    <div class="spinner-container">
+      <img class="spinner" url="{{ base_url }}voila/static/erdc.png"></svg>
+    </div>
+    {{ caller() }}
+  </div>
+{%- endmacro %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ base_url }}voila/static/materialize.min.css">
+
+    <!-- Base CSS -->
+    <style type="text/css">
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url({{base_url}}voila/static/icons_font.ttf) format('truetype');
+      }
+
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+      }
+
+      .brand-logo-container {
+        margin-top: 32px;
+        margin-bottom: 32px;
+      }
+
+      .brand-logo {
+        height: 100%;
+        width: 100%;
+      }
+
+      .sidenav {
+        width: fit-content;
+        transform: translateX(0%) !important;
+      }
+
+      .nav-wrapper {
+        background-color: #5cbcaf;
+      }
+
+      .sidenav-link {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+
+    <!-- Spinner CSS -->
+    <style type="text/css">
+      .loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 75vh;
+          color: var(--jp-content-font-color1);
+          font-family: sans-serif;
+      }
+
+      .spinner {
+        animation: rotation 2s infinite linear;
+        transform-origin: 50% 50%;
+      }
+
+      .spinner-container {
+        width: 10%;
+      }
+
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to   {transform: rotate(359deg);}
+      }
+
+      .voila-spinner-color1{
+        fill: #5cbcaf;
+      }
+
+      .voila-spinner-color2{
+        fill: #f8e14b;
+      }
+    </style>
+
+    {% block head %}
+    {% endblock %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body data-base-url="{{ base_url }}voila/">
+    {% block body %}
+    {% endblock %}
+
+    <script src="{{ base_url }}voila/static/materialize.min.js"></script>
+  </body>
+</html>
