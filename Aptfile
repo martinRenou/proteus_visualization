@@ -1,2 +1,5 @@
-xvfb
-libsm-dev
+libsm6
+libxext6
+libxrender-dev
+libice6
+vtk7
