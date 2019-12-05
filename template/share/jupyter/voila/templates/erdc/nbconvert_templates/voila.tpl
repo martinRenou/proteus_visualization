@@ -11,7 +11,7 @@
 {% set bar_color = '#555454' %}
 <link href="{{resources.base_url}}voila/static/theme-dark.css" rel="stylesheet" type='text/css'>
 {% else %}
-{% set bar_color = '#5cbcaf' %}
+{% set bar_color = '#e6e6e6' %}
 <link href="{{resources.base_url}}voila/static/theme-light.css" rel="stylesheet" type='text/css'>
 {% endif %}
 <link href="{{resources.base_url}}voila/static/materialize.min.css" rel="stylesheet" type='text/css'>
@@ -84,6 +84,12 @@
     word-wrap: normal;
     direction: ltr;
   }
+
+  .gany-scene {
+    height: 700px;
+    box-shadow: 0px 1px 10px 0 rgba(1, 0, 0, 0.17);
+  }
+
 </style>
 
 {% for css in resources.inlining.css %}
@@ -128,7 +134,7 @@ var voila_process = function(cell_index, cell_count) {
       <nav class="top-nav">
         <div class="nav-wrapper">
           <a href="#!" class="brand-logo-container">
-            <object class="brand-logo" type="image/png" data="{{ resources.base_url }}voila/static/erdc.png"></object>
+            <object class="brand-logo" type="image/png" data="{{ resources.base_url }}voila/static/erdc_color.png"></object>
           </a>
           <ul class="right">
             <li><a href="#"><i class="material-icons" id="kernel-status-icon">radio_button_unchecked</i></a></li>
