@@ -16,11 +16,15 @@ def reverse_normals(grid):
     return reverse.GetOutput()
 
 
-def write_unstructured_grid_from_polydata(writer, filename, poly):
+def to_ugrid(grid):
     ugrid_filter = vtk.vtkAppendFilter()
-    ugrid_filter.SetInputData(poly)
+    ugrid_filter.SetInputData(grid)
     ugrid_filter.Update()
-    grid = ugrid_filter.GetOutput()
+    return ugrid_filter.GetOutput()
+
+
+def write_unstructured_grid_from_polydata(writer, filename, poly):
+    grid = to_ugrid(poly)
 
     writer.SetInputData(grid)
     writer.SetFileName(filename)
@@ -78,6 +82,38 @@ def to_vtk_files():
         threshold.ThresholdByLower(0)
         threshold.Update()
 
+        left_boundary = threshold.GetOutput()
+
+        left_boundary.GetPointData().RemoveArray('x')
+        left_boundary.GetPointData().RemoveArray('y')
+        left_boundary.GetPointData().RemoveArray('z')
+        left_boundary.GetPointData().RemoveArray('p')
+
+        left_boundary = reverse_normals(left_boundary)
+
+        write_unstructured_grid_from_polydata(writer, 'proteus_vtu/proteus_left_boundary_{}.vtu'.format(i), left_boundary)
+
+        # Extract the right boundary
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'x')
+        threshold.ThresholdByUpper(3.22)
+        threshold.Update()
+
+        right_boundary = threshold.GetOutput()
+
+        right_boundary.GetPointData().RemoveArray('x')
+        right_boundary.GetPointData().RemoveArray('y')
+        right_boundary.GetPointData().RemoveArray('z')
+        right_boundary.GetPointData().RemoveArray('p')
+
+        right_boundary = reverse_normals(right_boundary)
+
+        write_unstructured_grid_from_polydata(writer, 'proteus_vtu/proteus_right_boundary_{}.vtu'.format(i), right_boundary)
+
+        # Extract the front boundary
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'y')
+        threshold.ThresholdByLower(0)
+        threshold.Update()
+
         front_boundary = threshold.GetOutput()
 
         front_boundary.GetPointData().RemoveArray('x')
@@ -88,6 +124,69 @@ def to_vtk_files():
         front_boundary = reverse_normals(front_boundary)
 
         write_unstructured_grid_from_polydata(writer, 'proteus_vtu/proteus_front_boundary_{}.vtu'.format(i), front_boundary)
+
+        # Extract the back boundary
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'y')
+        threshold.ThresholdByUpper(1)
+        threshold.Update()
+
+        back_boundary = threshold.GetOutput()
+
+        back_boundary.GetPointData().RemoveArray('x')
+        back_boundary.GetPointData().RemoveArray('y')
+        back_boundary.GetPointData().RemoveArray('z')
+        back_boundary.GetPointData().RemoveArray('p')
+
+        back_boundary = reverse_normals(back_boundary)
+
+        write_unstructured_grid_from_polydata(writer, 'proteus_vtu/proteus_back_boundary_{}.vtu'.format(i), back_boundary)
+
+        # Extract the ground
+        threshold.AllScalarsOff()  # All points should verify the condition on a cell from now on
+
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'y')
+        threshold.ThresholdByLower(0.9999)
+        threshold.Update()
+
+        inter = threshold.GetOutput()
+        threshold.SetInputData(to_ugrid(inter))
+
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'y')
+        threshold.ThresholdByUpper(0.0001)
+        threshold.Update()
+
+        inter = threshold.GetOutput()
+        threshold.SetInputData(to_ugrid(inter))
+
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'x')
+        threshold.ThresholdByLower(3.2199)
+        threshold.Update()
+
+        inter = threshold.GetOutput()
+        threshold.SetInputData(to_ugrid(inter))
+
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'x')
+        threshold.ThresholdByUpper(0.0001)
+        threshold.Update()
+
+        inter = threshold.GetOutput()
+        threshold.SetInputData(to_ugrid(inter))
+
+        threshold.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 'z')
+        threshold.ThresholdByLower(0.9999)
+        threshold.Update()
+
+        bottom_boundary = threshold.GetOutput()
+
+        bottom_boundary.GetPointData().RemoveArray('x')
+        bottom_boundary.GetPointData().RemoveArray('y')
+        bottom_boundary.GetPointData().RemoveArray('z')
+        bottom_boundary.GetPointData().RemoveArray('p')
+
+        bottom_boundary = reverse_normals(bottom_boundary)
+
+        write_unstructured_grid_from_polydata(writer, 'proteus_vtu/proteus_bottom_boundary_{}.vtu'.format(i), bottom_boundary)
+
 
 
 if __name__ == "__main__":
