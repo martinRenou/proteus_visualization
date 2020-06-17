@@ -6,27 +6,16 @@ import sys
 import vtk
 
 
-def to_vtk_files(filepath):
-    reader = vtk.vtkXdmfReader()
-    reader.SetFileName(filepath)
-    reader.Update()
-
-    info = reader.GetOutputInformation(0)
-    timestamps = info.Get(vtk.vtkCompositeDataPipeline.TIME_STEPS())
-
-    grid = reader.GetOutput()
-
+def to_vtk_files():
     writer = vtk.vtkXMLUnstructuredGridWriter()
 
-    dir_name = 'proteus_vtu'
+    reader = vtk.vtkXMLUnstructuredGridReader()
 
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
+    for i in range(77):
+        reader.SetFileName('proteus_vtu/proteus_{}.vtu'.format(i))
+        reader.Update()
 
-    for index, time in enumerate(timestamps):
-        reader.UpdateTimeStep(time)
-
-        unstructured_grid = grid.GetBlock(0).GetBlock(0)
+        unstructured_grid = reader.GetOutput()
 
         contour_filter = vtk.vtkContourFilter()
         contour_filter.SetInputData(unstructured_grid)
@@ -48,16 +37,30 @@ def to_vtk_files(filepath):
 
         contour = contour_filter.GetOutput()
 
+        def reverse_normals(grid):
+            polydata_filter = vtk.vtkGeometryFilter()
+            polydata_filter.SetInputData(grid)
+            polydata_filter.Update()
+            polydata = polydata_filter.GetOutput()
+
+            reverse = vtk.vtkReverseSense()
+            reverse.ReverseCellsOn()
+            reverse.SetInputData(polydata)
+            reverse.Update()
+            return reverse.GetOutput()
+
+        contour = reverse_normals(contour)
+
         ugrid_filter = vtk.vtkAppendFilter()
         ugrid_filter.SetInputData(contour)
         ugrid_filter.Update()
         unstructured_grid = ugrid_filter.GetOutput()
 
         writer.SetInputData(unstructured_grid)
-        writer.SetFileName('{}/proteus_contour_{}.vtu'.format(dir_name, index))
+        writer.SetFileName('proteus_vtu/proteus_contour_{}.vtu'.format(i))
 
         writer.Write()
 
 
 if __name__ == "__main__":
-    to_vtk_files(sys.argv[1])
+    to_vtk_files()
